@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\V1\AuthController;
 use App\Http\Controllers\API\V1\CandidateController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -17,12 +18,14 @@ use Illuminate\Support\Facades\Route;
 
 // Use semantic versioning
 Route::prefix('v1.0.0')->group(function () {
-    Route::apiResource('/candidate', CandidateController::class);
-    Route::post('/candidate/upload', [CandidateController::class, 'upload']);
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::middleware('auth:api')->group(function () {
+        Route::get('/profile', [AuthController::class, 'profile']);
+        Route::post('/logout', [AuthController::class, 'logout']);
 
-    Route::get('/resume/{file}', [CandidateController::class, 'viewUploadedResume']);
-});
+        Route::apiResource('/candidate', CandidateController::class);
+        Route::post('/candidate/upload', [CandidateController::class, 'upload']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+        Route::get('/resume/{file}', [CandidateController::class, 'viewUploadedResume']);
+    });
 });
