@@ -23,7 +23,7 @@ class Candidate extends Model
         'education_id',
         'applied_position_id',
         'last_position_id',
-        'experince',
+        'experience',
         'resume_url',
     ];
 
