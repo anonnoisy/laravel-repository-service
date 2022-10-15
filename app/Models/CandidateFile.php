@@ -17,6 +17,7 @@ class CandidateFile extends Model
     protected $fillable = [
         'candidate_id',
         'candidate_email',
+        'file_name',
         'path',
     ];
 
