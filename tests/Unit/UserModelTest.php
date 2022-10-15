@@ -8,7 +8,9 @@ use App\Models\Position;
 use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
 class UserModelTest extends TestCase
@@ -67,5 +69,18 @@ class UserModelTest extends TestCase
 
         $this->assertNotEquals($password, $user->password);
         $this->assertTrue(Hash::check($password, $user->password));
+    }
+
+    /** @test */
+    public function a_user_password_must_be_private()
+    {
+        $position = Position::factory()->create();
+        $user = User::factory()->create([
+            'position_id' => $position->id,
+            'password' => Hash::make("MyPassword")
+        ]);
+
+        $userResponse = $user->toArray();
+        $this->assertArrayNotHasKey('password', $userResponse);
     }
 }
