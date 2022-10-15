@@ -25,6 +25,8 @@ class UploadRequest extends FormRequest
     public function rules()
     {
         return [
+            'candidate_id' => 'nullable|integer|exists:candidates,id',
+            'candidate' => 'required|unique:candidate_files,candidate_email',
             'resume_file' => [
                 'required',
                 File::types('pdf')

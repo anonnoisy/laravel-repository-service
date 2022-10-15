@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 // Use semantic versioning
 Route::prefix('v1.0.0')->group(function () {
     Route::apiResource('/candidate', CandidateController::class);
+    Route::post('/candidate/upload', [CandidateController::class, 'upload']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
