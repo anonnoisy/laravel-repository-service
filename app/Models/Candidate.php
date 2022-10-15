@@ -27,6 +27,19 @@ class Candidate extends Model
     ];
 
     /**
+     * The relationships that should always be loaded.
+     *
+     * @var array
+     */
+    protected $with = [
+        'education',
+        'applied_position',
+        'last_position',
+        'skills',
+        'resume_files',
+    ];
+
+    /**
      * Get the education that owns the candidate.
      */
     public function education()
@@ -63,6 +76,6 @@ class Candidate extends Model
      */
     public function resume_files()
     {
-        return $this->belongsToMany(CandidateFile::class);
+        return $this->hasMany(CandidateFile::class);
     }
 }
