@@ -59,11 +59,6 @@ class UpdateRequest extends FormRequest
                 'alpha',
                 Rule::in(['year', 'month'])
             ],
-            // 'resume_file' => [
-            //     'required',
-            //     File::types('pdf')
-            //         ->max(3 * 1024) // max file size 3 MB
-            // ]
         ];
     }
 
