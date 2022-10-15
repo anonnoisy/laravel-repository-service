@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -21,7 +20,7 @@ class UserSeeder extends Seeder
             ->where('name', 'Senior HRD')
             ->first();
 
-        $userData = [
+        $seniorHRDUserData = [
             'first_name' => 'John Doe',
             'last_name' => NULL,
             'position_id' => $position->id,
@@ -31,9 +30,28 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
         ];
 
-        $user = User::where('email', 'john@dev.com')->first();
-        if (empty($user)) {
-            $user = User::create($userData);
+        $seniorHRD = User::where('email', 'john@dev.com')->first();
+        if (empty($seniorHRD)) {
+            $seniorHRD = User::create($seniorHRDUserData);
+        }
+
+        $position = DB::table('positions')
+            ->where('name', 'HRD')
+            ->first();
+
+        $hrdUserData = [
+            'first_name' => 'Kyle Alam',
+            'last_name' => 'Bustamante',
+            'position_id' => $position->id,
+            'username' => 'kylealam',
+            'email' => 'kyle@dev.com',
+            'email_verified_at' => NULL,
+            'password' => Hash::make('password'),
+        ];
+
+        $hrd = User::where('email', 'kyle@dev.com')->first();
+        if (empty($hrd)) {
+            $hrd = User::create($hrdUserData);
         }
     }
 }

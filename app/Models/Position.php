@@ -19,6 +19,25 @@ class Position extends Model
     ];
 
     /**
+     * Find or create permission by its name (and optionally guardName).
+     *
+     * @param string $name
+     * @param string|null $guardName
+     *
+     * @return \Spatie\Permission\Contracts\Permission
+     */
+    public function findOrCreate(string $name): Position
+    {
+        $exists = $this->where('name', $name)->first();
+
+        if (empty($exists)) {
+            return $this->create(['name' => $name]);
+        }
+
+        return $exists;
+    }
+
+    /**
      * Get the candidates for the position.
      */
     public function candidates()

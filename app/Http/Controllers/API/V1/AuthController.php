@@ -31,6 +31,7 @@ class AuthController extends Controller
     public function profile()
     {
         $user = auth()->user();
+        dd($user->permissions);
 
         return response([
             'success' => true,

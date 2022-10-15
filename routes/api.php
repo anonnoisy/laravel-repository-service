@@ -23,8 +23,14 @@ Route::prefix('v1.0.0')->group(function () {
         Route::get('/profile', [AuthController::class, 'profile']);
         Route::post('/logout', [AuthController::class, 'logout']);
 
-        Route::apiResource('/candidate', CandidateController::class);
-        Route::post('/candidate/upload', [CandidateController::class, 'upload']);
+        Route::prefix('candidate')->middleware(['role:senior-hrd'])->group(function () {
+            Route::get('/', [CandidateController::class, 'index']);
+            Route::post('/', [CandidateController::class, 'store']);
+            Route::get('/{id}', [CandidateController::class, 'show']);
+            Route::put('/{id}', [CandidateController::class, 'update']);
+            Route::delete('/{id}', [CandidateController::class, 'destroy']);
+            Route::post('/upload', [CandidateController::class, 'upload']);
+        });
 
         Route::get('/resume/{file}', [CandidateController::class, 'viewUploadedResume']);
     });
