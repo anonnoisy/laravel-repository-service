@@ -8,8 +8,10 @@ use App\Libraries\API\V1\Response\Response;
 use App\Libraries\API\V1\Response\StatusCode;
 use App\Libraries\API\V1\Response\SuccessResponse;
 use App\Models\Candidate;
+use App\Models\CandidateFile;
 use Exception;
 use Illuminate\Http\Request;
+use Ramsey\Uuid\Uuid;
 
 class CandidateRepoImpl implements CandidateRepoInterface
 {
@@ -131,11 +133,47 @@ class CandidateRepoImpl implements CandidateRepoInterface
 		], StatusCode::NOT_FOUND);
 	}
 
+	/**
+	 * Method used for upload candidate resume file
+	 *
+	 * @param \Illuminate\Http\Request $request
+	 * @return \App\Libraries\API\V1\Response\Response
+	 * @author Rifky Sultan Karisma A <rifkysultanka@gmail.com>
+	 */
 	public function uploadResumeCandidate(Request $request): Response
 	{
-		return new Response();
+		try {
+			if ($file = $request->file('resume_file')) {
+				$randStr = Uuid::uuid4()->toString();
+				$path = $file->store("public/files/resumes/{$randStr}");
+				$name = $file->getClientOriginalName();
+
+				$uploadedResume = CandidateFile::create([
+					'candidate_email' => $request->candidate_email,
+					'file_name' => $name,
+					'path' => $path,
+				]);
+
+				return Response::setup([
+					'success' => true,
+					'message' => 'successfully uploaded candidate resume file.',
+					'data' => $uploadedResume
+				], StatusCode::CREATED);
+			}
+		} catch (Exception $th) {
+			return Response::setup([
+				'success' => false,
+				'message' => 'something went wrong.',
+			], StatusCode::ERROR_CODE);
+		}
 	}
 
+	/**
+	 * This method to manipulate experience information from request
+	 *
+	 * @param Request $experienceRequest
+	 * @return int $experience
+	 */
 	private function getExperience($experienceRequest): int
 	{
 		$experienceMonths = (object) $experienceRequest;
