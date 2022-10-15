@@ -24,7 +24,6 @@ class Candidate extends Model
         'applied_position_id',
         'last_position_id',
         'experience',
-        'resume_url',
     ];
 
     /**
