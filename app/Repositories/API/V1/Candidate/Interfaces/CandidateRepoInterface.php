@@ -12,4 +12,5 @@ interface CandidateRepoInterface
 	public function storeCandidate(Request $request): Response;
 	public function updateCandidate(Request $request, int $id): Response;
 	public function deleteCandidate(int $id): Response;
+	public function uploadResumeCandidate(Request $request): Response;
 }

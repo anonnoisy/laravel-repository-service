@@ -131,6 +131,11 @@ class CandidateRepoImpl implements CandidateRepoInterface
 		], StatusCode::NOT_FOUND);
 	}
 
+	public function uploadResumeCandidate(Request $request): Response
+	{
+		return new Response();
+	}
+
 	private function getExperience($experienceRequest): int
 	{
 		$experienceMonths = (object) $experienceRequest;
