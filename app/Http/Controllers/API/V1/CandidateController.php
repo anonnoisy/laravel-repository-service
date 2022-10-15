@@ -89,4 +89,20 @@ class CandidateController extends Controller
         $deletedCandidate = $this->candidateRepo->uploadResumeCandidate($request);
         return $deletedCandidate->json();
     }
+
+    /**
+     * View uploaded candidate resume
+     *
+     * @param string $file
+     * @return void
+     */
+    public function viewUploadedResume($file)
+    {
+        $path = storage_path("app/files/resumes/$file");
+        if (file_exists($path)) {
+            return response()->file($path, array('Content-Type' => 'application/pdf'));
+        }
+
+        abort(404);
+    }
 }

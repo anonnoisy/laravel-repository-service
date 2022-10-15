@@ -144,9 +144,9 @@ class CandidateRepoImpl implements CandidateRepoInterface
 	{
 		try {
 			if ($file = $request->file('resume_file')) {
-				$randStr = Uuid::uuid4()->toString();
-				$path = $file->store("public/files/resumes/{$randStr}");
-				$name = $file->getClientOriginalName();
+				$randStrAsDir = Uuid::uuid4()->toString();
+				$name = $randStrAsDir . "-" . date('Ymdhis') . "." . $file->getClientOriginalExtension();
+				$path = $file->storeAs("/files/resumes", $name);
 
 				$uploadedResume = CandidateFile::create([
 					'candidate_email' => $request->candidate_email,
@@ -163,7 +163,7 @@ class CandidateRepoImpl implements CandidateRepoInterface
 		} catch (Exception $th) {
 			return Response::setup([
 				'success' => false,
-				'message' => 'something went wrong.',
+				'message' => 'something went wrong.' . $th->getMessage(),
 			], StatusCode::ERROR_CODE);
 		}
 	}

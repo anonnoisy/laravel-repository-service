@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1.0.0')->group(function () {
     Route::apiResource('/candidate', CandidateController::class);
     Route::post('/candidate/upload', [CandidateController::class, 'upload']);
+
+    Route::get('/resume/{file}', [CandidateController::class, 'viewUploadedResume']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

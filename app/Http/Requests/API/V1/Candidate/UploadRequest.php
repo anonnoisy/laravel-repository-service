@@ -25,12 +25,8 @@ class UploadRequest extends FormRequest
     public function rules()
     {
         return [
-            'candidate_email' => 'required|unique:candidate_files,candidate_email',
-            'resume_file' => [
-                'required',
-                File::types('pdf')
-                    ->max(3 * 1024) // max file size 3 MB
-            ]
+            'candidate_email' => 'required',
+            'resume_file' => 'required|mimes:pdf|max:6144' // max file size 4 MB
         ];
     }
 }

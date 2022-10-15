@@ -15,10 +15,10 @@ return new class extends Migration
     {
         Schema::create('candidate_files', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('candidate_id')
-                ->constrained('candidates')
-                ->nullable();
-            $table->string('candidate_email')->unique()->index('idx_candidate_email');
+            $table->unsignedBigInteger('candidate_id')->nullable();
+            $table->foreign('candidate_id')->references('id')->on('candidates');
+
+            $table->string('candidate_email')->index('idx_candidate_email');
             $table->string('path');
             $table->timestamps();
         });
