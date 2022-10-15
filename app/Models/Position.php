@@ -17,4 +17,20 @@ class Position extends Model
     protected $fillable = [
         'name',
     ];
+
+    /**
+     * Get the candidates for the position.
+     */
+    public function candidates()
+    {
+        return $this->hasMany(Candidate::class);
+    }
+
+    /**
+     * Get the users for the position.
+     */
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
 }

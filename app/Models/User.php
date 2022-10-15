@@ -44,4 +44,12 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Get the position that owns the user.
+     */
+    public function position()
+    {
+        return $this->belongsTo(Position::class);
+    }
 }

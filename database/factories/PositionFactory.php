@@ -1,0 +1,31 @@
+<?php
+
+namespace Database\Factories;
+
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Position>
+ */
+class PositionFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition()
+    {
+        $positions = [
+            'CEO',
+            'CTO',
+            'CMO',
+            'Senior HRD',
+            'HRD',
+        ];
+
+        return [
+            'name' => $positions[rand(0, 4)],
+        ];
+    }
+}

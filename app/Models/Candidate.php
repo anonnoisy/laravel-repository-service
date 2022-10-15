@@ -26,4 +26,28 @@ class Candidate extends Model
         'experince',
         'resume_url',
     ];
+
+    /**
+     * Get the education that owns the candidate.
+     */
+    public function education()
+    {
+        return $this->belongsTo(Education::class, 'education_id');
+    }
+
+    /**
+     * Get the last position that owns the candidate.
+     */
+    public function last_position()
+    {
+        return $this->belongsTo(Position::class, 'last_position_id');
+    }
+
+    /**
+     * Get the applied position that owns the candidate.
+     */
+    public function applied_position()
+    {
+        return $this->belongsTo(Position::class, 'applied_position_id');
+    }
 }
