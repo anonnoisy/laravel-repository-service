@@ -58,4 +58,12 @@ class Candidate extends Model
     {
         return $this->belongsToMany(Skill::class);
     }
+
+    /**
+     * Get all of the resume files for the candidate.
+     */
+    public function resume_files()
+    {
+        return $this->belongsToMany(CandidateFile::class);
+    }
 }

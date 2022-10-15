@@ -19,4 +19,12 @@ class CandidateFile extends Model
         'candidate_email',
         'path',
     ];
+
+    /**
+     * Get the candidate that owns the upload file.
+     */
+    public function candidate()
+    {
+        return $this->belongsTo(Candidate::class, 'candidate_id');
+    }
 }
