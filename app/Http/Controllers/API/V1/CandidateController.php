@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\V1\Candidate\StoreRequest as CandidateStoreRequest;
 use App\Http\Requests\API\V1\Candidate\UpdateRequest as CandidateUpdateRequest;
+use App\Http\Requests\API\V1\Candidate\UploadRequest as CandidateUploadRequest;
 use App\Repositories\API\V1\Candidate\CandidateRepoImpl;
 use Illuminate\Http\Request;
 
@@ -74,6 +75,18 @@ class CandidateController extends Controller
     public function destroy(int $id)
     {
         $deletedCandidate = $this->candidateRepo->deleteCandidate($id);
+        return $deletedCandidate->json();
+    }
+
+    /**
+     * Upload candidate resume file to storage.
+     *
+     * @param  CandidateUploadRequest $request
+     * @return \Illuminate\Http\Response
+     */
+    public function upload(CandidateUploadRequest $request)
+    {
+        $deletedCandidate = $this->candidateRepo->uploadResumeCandidate($request);
         return $deletedCandidate->json();
     }
 }
