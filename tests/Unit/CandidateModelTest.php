@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Models\Candidate;
 use App\Models\Education;
 use App\Models\Position;
+use App\Models\Skill;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -81,5 +82,28 @@ class CandidateModelTest extends TestCase
         ]);
 
         $this->assertDatabaseCount('candidates', 1);
+    }
+
+    /** @test */
+    public function a_candidate_can_belong_to_a_skill()
+    {
+        $education = Education::factory()->create();
+        $last_position = Position::factory()->create();
+        $applied_position = Position::factory()->create();
+
+        $candidate = Candidate::factory()->create([
+            'education_id' => $education->id,
+            'last_position_id' => $last_position->id,
+            'applied_position_id' => $applied_position->id,
+        ]);
+
+        $skill = Skill::factory()->create();
+
+        $candidate->skills()->sync($skill);
+
+        $this->assertDatabaseHas('candidate_skill', [
+            'skill_id' => $skill->id,
+            'candidate_id' => $candidate->id
+        ]);
     }
 }

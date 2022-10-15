@@ -17,4 +17,12 @@ class Skill extends Model
     protected $fillable = [
         'name',
     ];
+
+    /**
+     * Get all of the candidates for the skill.
+     */
+    public function candidates()
+    {
+        return $this->belongsToMany(Candidate::class);
+    }
 }

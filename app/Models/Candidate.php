@@ -50,4 +50,12 @@ class Candidate extends Model
     {
         return $this->belongsTo(Position::class, 'applied_position_id');
     }
+
+    /**
+     * Get all of the skills for the candidate.
+     */
+    public function skills()
+    {
+        return $this->belongsToMany(Skill::class);
+    }
 }
