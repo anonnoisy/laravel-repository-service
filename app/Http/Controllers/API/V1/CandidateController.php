@@ -7,15 +7,16 @@ use App\Http\Requests\API\V1\Candidate\StoreRequest as CandidateStoreRequest;
 use App\Http\Requests\API\V1\Candidate\UpdateRequest as CandidateUpdateRequest;
 use App\Http\Requests\API\V1\Candidate\UploadRequest as CandidateUploadRequest;
 use App\Repositories\API\V1\Candidate\CandidateRepoImpl;
+use App\Services\API\V1\Candidate\CandidateServiceImpl;
 use Illuminate\Http\Request;
 
 class CandidateController extends Controller
 {
-    private $candidateRepo = NULL;
+    private CandidateServiceImpl $candidateService;
 
     public function __construct()
     {
-        $this->candidateRepo = new CandidateRepoImpl();
+        $this->candidateService = new CandidateServiceImpl(new CandidateRepoImpl());
     }
 
     /**
@@ -25,7 +26,7 @@ class CandidateController extends Controller
      */
     public function index(Request $request)
     {
-        $candidateList = $this->candidateRepo->getCandidate($request);
+        $candidateList = $this->candidateService->index($request);
         return $candidateList->json();
     }
 
@@ -37,7 +38,7 @@ class CandidateController extends Controller
      */
     public function store(CandidateStoreRequest $request)
     {
-        $storedCandidate = $this->candidateRepo->storeCandidate($request);
+        $storedCandidate = $this->candidateService->store($request);
         return $storedCandidate->json();
     }
 
@@ -49,7 +50,7 @@ class CandidateController extends Controller
      */
     public function show(int $id)
     {
-        $candidate = $this->candidateRepo->findCandidate($id);
+        $candidate = $this->candidateService->show($id);
         return $candidate->json();
     }
 
@@ -62,7 +63,7 @@ class CandidateController extends Controller
      */
     public function update(CandidateUpdateRequest $request, $id)
     {
-        $updatedCandidate = $this->candidateRepo->updateCandidate($request, $id);
+        $updatedCandidate = $this->candidateService->update($request, $id);
         return $updatedCandidate->json();
     }
 
@@ -74,7 +75,7 @@ class CandidateController extends Controller
      */
     public function destroy(int $id)
     {
-        $deletedCandidate = $this->candidateRepo->deleteCandidate($id);
+        $deletedCandidate = $this->candidateService->delete($id);
         return $deletedCandidate->json();
     }
 
@@ -86,7 +87,7 @@ class CandidateController extends Controller
      */
     public function upload(CandidateUploadRequest $request)
     {
-        $deletedCandidate = $this->candidateRepo->uploadResumeCandidate($request);
+        $deletedCandidate = $this->candidateService->upload($request);
         return $deletedCandidate->json();
     }
 

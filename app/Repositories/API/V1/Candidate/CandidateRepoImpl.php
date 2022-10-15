@@ -2,70 +2,36 @@
 
 namespace App\Repositories\API\V1\Candidate;
 
-use App\Libraries\API\V1\Response\ErrorResponse;
 use App\Repositories\API\V1\Candidate\Interfaces\CandidateRepoInterface;
-use App\Libraries\API\V1\Response\Response;
-use App\Libraries\API\V1\Response\StatusCode;
-use App\Libraries\API\V1\Response\SuccessResponse;
 use App\Models\Candidate;
 use App\Models\CandidateFile;
-use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;
 
 class CandidateRepoImpl implements CandidateRepoInterface
 {
-	public function getCandidate(Request $request): Response
+	public function getCandidate(Request $request): Collection
 	{
 		$candidateList = Candidate::orderBy('updated_at')->get();
-
-		if ($candidateList->count() < 1) {
-			return ErrorResponse::setup([], StatusCode::NO_CONTENT);
-		}
-
-		return SuccessResponse::setup([
-			'message' => 'successfully get candidate list',
-			'data' => $candidateList
-		], StatusCode::OK);
+		return $candidateList;
 	}
 
-	public function findCandidate(int $id): Response
+	public function findCandidate(int $id): Candidate|null
 	{
 		$candidate = Candidate::find($id);
-		$candidate = $this->populateCandidateWithFiles($candidate);
-
-		if (!empty($candidate)) {
-			return Response::setup([
-				'message' => 'successfully find candidate',
-				'data' => $candidate
-			], StatusCode::OK);
-		}
-
-		return Response::setup([
-			'message' => 'candidate not found.'
-		], StatusCode::NOT_FOUND);
+		return $this->populateCandidateWithFiles($candidate);
 	}
 
-	public function storeCandidate(Request $request): Response
+	public function storeCandidate(Request $request): Candidate|null
 	{
-		try {
-			$createdCandidate = Candidate::create($this->setupCandidateDataStore($request));
-			$createdCandidate->skills()->sync($request->skill_ids);
-			$candidate = $this->populateCandidateWithFiles($createdCandidate);
-
-			return Response::setup([
-				'message' => 'successfully added new candidate',
-				'data' => $candidate,
-			], StatusCode::OK);
-		} catch (Exception $e) {
-			return Response::setup([
-				'message' => 'something went wrong.',
-			], StatusCode::ERROR_CODE);
-		}
+		$createdCandidate = Candidate::create($this->setupCandidateDataStore($request));
+		$createdCandidate->skills()->sync($request->skill_ids);
+		return $this->populateCandidateWithFiles($createdCandidate);
 	}
 
-	public function updateCandidate(Request $request, int $id): Response
+	public function updateCandidate(Request $request, int $id): Candidate|null
 	{
 		$candidate = Candidate::where('id', $id)->first();
 
@@ -73,40 +39,21 @@ class CandidateRepoImpl implements CandidateRepoInterface
 			$candidate->update($this->setupCandidateDataStore($request));
 			$candidate->skills()->sync($request->skill_ids);
 			$candidate = $this->populateCandidateWithFiles($candidate);
-
-			return Response::setup([
-				'success' => true,
-				'message' => 'successfully updated candidate.',
-				'data' => $candidate
-			], StatusCode::OK);
-			try {
-			} catch (Exception $e) {
-				return Response::setup([
-					'success' => false,
-					'message' => 'something went wrong.',
-				], StatusCode::ERROR_CODE);
-			}
 		}
 
-		return Response::setup([
-			'success' => false,
-			'message' => 'candidate not found.'
-		], StatusCode::NOT_FOUND);
+		return $candidate;
 	}
 
-	public function deleteCandidate(int $id): Response
+	public function deleteCandidate(int $id): bool|null
 	{
 		$candidate = Candidate::find($id);
 		if (!empty($candidate)) {
 			$candidate->delete();
 
-			return Response::setup([], StatusCode::NO_CONTENT);
+			return true;
 		}
 
-		return Response::setup([
-			'success' => false,
-			'message' => 'candidate not found.'
-		], StatusCode::NOT_FOUND);
+		return false;
 	}
 
 	/**
@@ -116,32 +63,23 @@ class CandidateRepoImpl implements CandidateRepoInterface
 	 * @return \App\Libraries\API\V1\Response\Response
 	 * @author Rifky Sultan Karisma A <rifkysultanka@gmail.com>
 	 */
-	public function uploadResumeCandidate(Request $request): Response
+	public function uploadResumeCandidate(Request $request): CandidateFile|null
 	{
-		try {
-			if ($file = $request->file('resume_file')) {
-				$randStrAsDir = Uuid::uuid4()->toString();
-				$name = $randStrAsDir . "-" . date('Ymdhis') . "." . $file->getClientOriginalExtension();
-				$path = $file->storeAs("/files/resumes", $name);
+		if ($file = $request->file('resume_file')) {
+			$randStrAsDir = Uuid::uuid4()->toString();
+			$name = $randStrAsDir . "-" . date('Ymdhis') . "." . $file->getClientOriginalExtension();
+			$path = $file->storeAs("/files/resumes", $name);
 
-				$uploadedResume = CandidateFile::create([
-					'candidate_email' => $request->candidate_email,
-					'file_name' => $name,
-					'path' => $path,
-				]);
+			$uploadedResume = CandidateFile::create([
+				'candidate_email' => $request->candidate_email,
+				'file_name' => $name,
+				'path' => $path,
+			]);
 
-				return Response::setup([
-					'success' => true,
-					'message' => 'successfully uploaded candidate resume file.',
-					'data' => $uploadedResume
-				], StatusCode::CREATED);
-			}
-		} catch (Exception $th) {
-			return Response::setup([
-				'success' => false,
-				'message' => 'something went wrong.' . $th->getMessage(),
-			], StatusCode::ERROR_CODE);
+			return $uploadedResume;
 		}
+
+		return null;
 	}
 
 	private function setupCandidateDataStore(Request $request): array
